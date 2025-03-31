@@ -68,18 +68,24 @@ class OpenMeteoService
      * @return array An array containing the weather metrics.
      */
 
+     private function buildUrl(string $type, array $additionalParams = []): string
+     {
+         $metricsString = implode(',', array_map(fn(WeatherMetrics $metric) => $metric->value, $this->metrics));
+         
+         $url = self::API_URL_CURRENT . '?latitude=' . $this->lat . '&longitude=' . $this->lng;
+         $url .= '&' . $type . '=' . $metricsString;
+         
+         foreach ($additionalParams as $key => $value) {
+             $url .= '&' . $key . '=' . $value;
+         }
+ 
+         return $url;
+     }
+
     public function currentWeather(): array
     {
 
-        $metricsString = implode(',', array_map(fn(WeatherMetrics $metric) => $metric->value, $this->metrics));
-
-        $url = sprintf(
-            '%s?latitude=%s&longitude=%s&current=%s',  
-            self::API_URL_CURRENT,
-            $this->lat,
-            $this->lng, 
-            $metricsString
-        );
+        $url = $this->buildUrl('current');
 
         $response = Http::get($url);
 
@@ -134,19 +140,13 @@ class OpenMeteoService
 
         $start = $startDate->format('Y-m-d');
         $end = $endDate->format('Y-m-d');
+        
+        $additionalParams = [
+            'start_date' => $start,
+            'end_date' => $end
+        ];
 
-        $metricsString = implode(',', array_map(fn(WeatherMetrics $metric) => $metric->value, $this->metrics));
-
-
-        $url = sprintf(
-            '%s?latitude=%s&longitude=%s&hourly=%s&start_date=%s&end_date=%s',
-            self::API_URL_CURRENT,
-            $this->lat,
-            $this->lng,
-            $metricsString,
-            $start,
-            $end
-        );
+        $url = $this->buildUrl('hourly', $additionalParams);
      
          $response = Http::get($url);
      
