@@ -40,8 +40,7 @@ class OpenMeteoService
      */
     public function __construct(private float $lat, private float $lng)
     {
-        $this->lat = $lat;
-        $this->lng = $lng;
+       
     }
 
      /**
