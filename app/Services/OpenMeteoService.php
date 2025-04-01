@@ -92,7 +92,7 @@ class OpenMeteoService
      * @access private
      * @author José González <jose@bitgenio.com>
      * @since 01/04/2025
-     * @param Response $response The response object from the API request.
+     * @param $response The response object from the API request.
      * @param  string $errorMessage The error message to throw if the response fails.
      * @return array The decoded JSON response as an array.
      */
