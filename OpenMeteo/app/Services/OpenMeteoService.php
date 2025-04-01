@@ -61,7 +61,7 @@ class OpenMeteoService
      * and returns an array containing various weather metrics. If a metric is unavailable, it will return 
      * 'No seleccionado'
      *
-     * @access public
+     * @access private
      * @author José González <jose@bitgenio.com>
      * @since 28/03/2025
      * @return array An array containing the weather metrics.
@@ -81,18 +81,44 @@ class OpenMeteoService
          return $url;
      }
 
+
+     /**
+     * Handle the response from the API and check for errors.
+     *
+     * This method checks if the API response has failed. If the response failed,
+     * it throws an exception with an error message. If it doesn't fail, it decodes
+     * the JSON response body into an array and returns it.
+     *
+     * @access private
+     * @author José González <jose@bitgenio.com>
+     * @since 01/04/2025
+     * @param Response $response The response object from the API request.
+     * @param  string $errorMessage The error message to throw if the response fails.
+     * @return array The decoded JSON response as an array.
+     */
+     private function handleApiResponse($response, string $errorMessage): array
+     {
+         if ($response->failed()) {
+             throw new \Exception($errorMessage);
+         }
+         $data = json_decode($response->body(), true);
+ 
+         return $data;
+     }
+
+
     public function currentWeather(): array
     {
 
         $url = $this->buildUrl('current');
-
         $response = Http::get($url);
 
-        if ($response->failed()) {
-            throw new \Exception('Error al obtener los datos del clima actual');
+        $data = $this->handleApiResponse($response, 'Error al obtener los datos del clima actual');
+
+        if (!isset($data['current'])) {
+            throw new \Exception('La API no devolvió datos de clima actual');
         }
 
-        $data = json_decode($response->body(), true);
 
         if (!isset($data['current'])) {
             throw new \Exception('La API no devolvió datos de clima actual');
@@ -148,12 +174,8 @@ class OpenMeteoService
         $url = $this->buildUrl('hourly', $additionalParams);
      
          $response = Http::get($url);
-     
-         if ($response->failed()) {
-             throw new \Exception('Error al obtener los datos históricos del clima');
-         }
-     
-         $data = json_decode($response->body(), true);
+
+         $data = $this->handleApiResponse($response, 'Error al obtener los datos históricos del clima');
      
          if (!isset($data['hourly'])) {
              throw new \Exception('La API no devolvió datos históricos del clima');
