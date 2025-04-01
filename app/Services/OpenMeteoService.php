@@ -161,16 +161,16 @@ class OpenMeteoService
 
      public function mapWeatherData(array $data, string $type): array
 {
-    $arrayMetrics = [
-        'temperature_2m', 'precipitation', 'rain', 'wind_speed_10m', 'wind_direction_10m', 'apparent_temperature', 
-        'is_day', 'relative_humidity_2m', 'showers', 'wind_gusts_10m', 'snowfall', 'weather_code', 'surface_pressure', 
-        'pressure_msl', 'cloud_cover'
-    ];
-    $arrayEnums = [
-        'temperature', 'precipitation', 'rain', 'windspeed', 'winddirection', 'apparent_temperature', 'is_day', 
-        'relative_humidity', 'showers', 'wind_gusts', 'snowfall', 'weather_code', 'surface_pressure', 'pressure_msl', 
-        'cloud_cover'
-    ];
+
+
+    $arrayMetrics = [];
+    $arrayEnums = [];
+
+    foreach (WeatherMetrics::cases() as $metric) {
+        $arrayMetrics[] = $metric->value;  // Guardamos las métricas (valores del enum)
+        $arrayEnums[] = $metric->name; 
+    }
+
     
     $weatherData = [];
 

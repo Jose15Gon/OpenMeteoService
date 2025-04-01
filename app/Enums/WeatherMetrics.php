@@ -3,19 +3,19 @@
 namespace App\Enums;
 
 enum WeatherMetrics: string {
-    case Temperature = 'temperature_2m';
-    case Precipitation = 'precipitation';
-    case Rain = 'rain';
-    case WindSpeed = 'wind_speed_10m';
-    case WindDirection = 'wind_direction_10m';
-    case ApparentTemperature = 'apparent_temperature';
-    case IsDay = 'is_day';
-    case RelativeHumidity = 'relative_humidity_2m';
-    case Showers = 'showers';
-    case WindGusts = 'wind_gusts_10m';
-    case Snowfall = 'snowfall';
-    case WeatherCode = 'weather_code';
-    case SurfacePressure = 'surface_pressure';
-    case PressureMSL = 'pressure_msl';
-    case CloudCover = 'cloud_cover';
+    case temperature = 'temperature_2m';
+    case precipitation = 'precipitation';
+    case rain = 'rain';
+    case windspeed = 'wind_speed_10m';
+    case winddirection = 'wind_direction_10m';
+    case apparent_temperature = 'apparent_temperature';
+    case is_day = 'is_day';
+    case relative_humidity = 'relative_humidity_2m';
+    case showers = 'showers';
+    case wind_gusts = 'wind_gusts_10m';
+    case snowfall = 'snowfall';
+    case weather_code = 'weather_code';
+    case surface_pressure = 'surface_pressure';
+    case pressure_msl = 'pressure_msl';
+    case cloud_cover = 'cloud_cover';
 }

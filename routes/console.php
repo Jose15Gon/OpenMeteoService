@@ -13,7 +13,7 @@ Artisan::command('get-weather {lat} {lng}', function ($lat, $lng) {
     try {
 
 
-        $meteoService->setMetrics(WeatherMetrics::Rain, WeatherMetrics::Precipitation, WeatherMetrics::CloudCover);
+        $meteoService->setMetrics(WeatherMetrics::rain, WeatherMetrics::precipitation, WeatherMetrics::cloud_cover);
         $weather = $meteoService->currentWeather();
 
         $this->info("Clima actual:");
@@ -38,7 +38,7 @@ $this->info("-------");
         $startDate = new DateTime('2025-04-01');
         $endDate = new DateTime('2025-04-02');
         
-        $openMeteoService->setMetrics(WeatherMetrics::Temperature, WeatherMetrics::Precipitation);
+        $openMeteoService->setMetrics(WeatherMetrics::temperature, WeatherMetrics::precipitation);
 
 
         $historicalData = $openMeteoService->historicalWeather($startDate, $endDate);
