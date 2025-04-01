@@ -119,11 +119,6 @@ class OpenMeteoService
             throw new \Exception('La API no devolvió datos de clima actual');
         }
 
-
-        if (!isset($data['current'])) {
-            throw new \Exception('La API no devolvió datos de clima actual');
-        }
-
         return [
             'temperature' => $data['current']['temperature_2m'] ?? 'No seleccionado',
             'precipitation' => $data['current']['precipitation'] ?? 'No seleccionado',
