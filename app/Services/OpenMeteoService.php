@@ -167,7 +167,7 @@ class OpenMeteoService
     $arrayEnums = [];
 
     foreach (WeatherMetrics::cases() as $metric) {
-        $arrayMetrics[] = $metric->value;  // Guardamos las métricas (valores del enum)
+        $arrayMetrics[] = $metric->value; 
         $arrayEnums[] = $metric->name; 
     }
 
