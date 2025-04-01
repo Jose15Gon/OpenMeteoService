@@ -81,7 +81,6 @@ class OpenMeteoService
          return $url;
      }
 
-
      /**
      * Handle the response from the API and check for errors.
      *
@@ -93,7 +92,7 @@ class OpenMeteoService
      * @author José González <jose@bitgenio.com>
      * @since 01/04/2025
      * @param $response The response object from the API request.
-     * @param  string $errorMessage The error message to throw if the response fails.
+     * @param string $errorMessage The error message to throw if the response fails.
      * @return array The decoded JSON response as an array.
      */
      private function handleApiResponse($response, string $errorMessage): array
@@ -106,7 +105,6 @@ class OpenMeteoService
          return $data;
      }
 
-
     public function currentWeather(): array
     {
 
@@ -118,25 +116,7 @@ class OpenMeteoService
         if (!isset($data['current'])) {
             throw new \Exception('La API no devolvió datos de clima actual');
         }
-
-        return [
-            'temperature' => $data['current']['temperature_2m'] ?? 'No seleccionado',
-            'precipitation' => $data['current']['precipitation'] ?? 'No seleccionado',
-            'rain' => $data['current']['rain'] ?? 'No seleccionado',
-            'windspeed' => $data['current']['wind_speed_10m'] ?? 'No seleccionado',
-            'winddirection' => $data['current']['wind_direction_10m'] ?? 'No seleccionado',
-            'apparent_temperature' => $data['current']['apparent_temperature'] ?? 'No seleccionado',
-            'is_day' => $data['current']['is_day'] ?? 'No seleccionado',
-            'relative_humidity' => $data['current']['relative_humidity_2m'] ?? 'No seleccionado',
-            'showers' => $data['current']['showers'] ?? 'No seleccionado',
-            'wind_gusts' => $data['current']['wind_gusts_10m'] ?? 'No seleccionado',
-            'snowfall' => $data['current']['snowfall'] ?? 'No seleccionado',
-            'weather_code' => $data['current']['weather_code'] ?? 'No seleccionado',
-            'surface_pressure' => $data['current']['surface_pressure'] ?? 'No seleccionado',
-            'pressure_msl' => $data['current']['pressure_msl'] ?? 'No seleccionado',
-            'cloud_cover' => $data['current']['cloud_cover'] ?? 'No seleccionado',
-        ];
-        
+        return $this->mapWeatherData($data, 'current');
     }
 
     /**
@@ -176,31 +156,40 @@ class OpenMeteoService
              throw new \Exception('La API no devolvió datos históricos del clima');
          }
      
-        $historicalData = [];
+         return $this->mapWeatherData($data, 'hourly');
+     }
+
+     public function mapWeatherData(array $data, string $type): array
+{
+    $arrayMetrics = [
+        'temperature_2m', 'precipitation', 'rain', 'wind_speed_10m', 'wind_direction_10m', 'apparent_temperature', 
+        'is_day', 'relative_humidity_2m', 'showers', 'wind_gusts_10m', 'snowfall', 'weather_code', 'surface_pressure', 
+        'pressure_msl', 'cloud_cover'
+    ];
+    $arrayEnums = [
+        'temperature', 'precipitation', 'rain', 'windspeed', 'winddirection', 'apparent_temperature', 'is_day', 
+        'relative_humidity', 'showers', 'wind_gusts', 'snowfall', 'weather_code', 'surface_pressure', 'pressure_msl', 
+        'cloud_cover'
+    ];
+    
+    $weatherData = [];
+
+    if ($type === 'current') {
+        foreach ($arrayMetrics as $i => $metric) {
+            $weatherData[$arrayEnums[$i]] = $data['current'][$metric] ?? 'No seleccionado';
+        }
+    }
+    elseif ($type === 'hourly') {
         foreach ($data['hourly']['time'] as $index => $time) {
-            $historicalData[] = [
-                'time' => $time,
-                'temperature' => $data['hourly']['temperature_2m'][$index] ?? 'No seleccionado',
-                'precipitation' => $data['hourly']['precipitation'][$index] ?? 'No seleccionado',
-                'rain' => $data['hourly']['rain'][$index] ?? 'No seleccionado',
-                'windspeed' => $data['hourly']['wind_speed_10m'][$index] ?? 'No seleccionado',
-                'winddirection' => $data['hourly']['wind_direction_10m'][$index] ?? 'No seleccionado',
-                'apparent_temperature' => $data['hourly']['apparent_temperature'][$index] ?? 'No seleccionado',
-                'is_day' => $data['hourly']['is_day'][$index] ?? 'No seleccionado',
-                'relative_humidity' => $data['hourly']['relative_humidity_2m'][$index] ?? 'No seleccionado',
-                'showers' => $data['hourly']['showers'][$index] ?? 'No seleccionado',
-                'wind_gusts' => $data['hourly']['wind_gusts_10m'][$index] ?? 'No seleccionado',
-                'snowfall' => $data['hourly']['snowfall'][$index] ?? 'No seleccionado',
-                'weather_code' => $data['hourly']['weather_code'][$index] ?? 'No seleccionado',
-                'surface_pressure' => $data['hourly']['surface_pressure'][$index] ?? 'No seleccionado',
-                'pressure_msl' => $data['hourly']['pressure_msl'][$index] ?? 'No seleccionado',
-                'cloud_cover' => $data['hourly']['cloud_cover'][$index] ?? 'No seleccionado',
-            ];
+            $hourlyData = ['time' => $time];
+            foreach ($arrayMetrics as $i => $metric) {
+                $hourlyData[$arrayEnums[$i]] = $data['hourly'][$metric][$index] ?? 'No seleccionado';
+            }
+            $weatherData[] = $hourlyData;
+        }
+    }
+    return $weatherData;
 }
 
-
-     
-         return $historicalData;
-     }
 
 }
